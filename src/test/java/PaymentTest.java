@@ -43,8 +43,7 @@ public class PaymentTest extends CardTest {
     public void testSetUp() {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedrivers.exe");
         driver = new ChromeDriver();
-        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS); //załadowanie strony
-        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); // czekanie na webelement
+        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         wait = new WebDriverWait(driver, 10);
         driver.manage().window().setSize(new Dimension(1290, 730));
         driver.manage().window().setPosition(new Point(8, 30));

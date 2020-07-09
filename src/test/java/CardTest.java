@@ -41,8 +41,8 @@ public class CardTest {
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
         driver.findElement(alert).click();
-//driver.findElements(By.cssSelector("tralala")).get(0); ->wyszukanie listy elementów o selektorze tralala.
-// i biore pierwszy element czyli elementu o indeksie 0
+    //driver.findElements(By.cssSelector("tralala")).get(0); ->wyszukanie listy elementów o selektorze tralala.
+    // i biore pierwszy element czyli elementu o indeksie 0
     }
 
 
@@ -121,12 +121,12 @@ public class CardTest {
     while ( products2.length>0){
         String element = products2[0];
         System.out.println("element "+ element);
-        System.out.printf("%n");
+        System.out.println("%n");
         System.out.println("products2.length " + products2.length);
-        System.out.printf("%n");
+        System.out.println("%n");
         products2 = ArrayUtils.remove(products2,0);
-        System.out.printf("-----");
-        System.out.printf("%n");
+        System.out.println("-----");
+        System.out.println("%n");
         By addAllProductToCardFromCategoryPage = By.cssSelector("a[href='?add-to-cart="+element+"']");
         driver.findElement(addAllProductToCardFromCategoryPage).click();
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
