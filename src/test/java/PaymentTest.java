@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.AfterEach;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -7,23 +6,19 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
 import java.util.concurrent.TimeUnit;
 
 
 public class PaymentTest extends CardTest {
 
-    CardTest card = new CardTest();
 
     WebDriver driver;
     WebDriverWait wait;
     By alert = By.cssSelector(".woocommerce-store-notice__dismiss-link");
     By goToCash = By.cssSelector("[class='checkout-button button alt wc-forward']");
     By showLogin = By.cssSelector("[class='showlogin']");
-    By username = By.cssSelector("[id='username']");
+    By userName = By.cssSelector("[id='username']");
     By password = By.cssSelector("[id='password']");
     By loginButton = By.cssSelector("[name='login']");
     By buyAndPayButton = By.cssSelector("[id='place_order']");
@@ -35,7 +30,9 @@ public class PaymentTest extends CardTest {
     By email = By.cssSelector("[id='billing_email']");
     By createCount = By.cssSelector("[id='createaccount']");
     By postCard = By.cssSelector("[id='billing_postcode']");
-    By createPassword = By.cssSelector("[class='create-account']");
+    By createPassword = By.cssSelector("[id='account_password']");
+    By strongPassword = By.cssSelector("[class='woocommerce-password-strength good']");
+
 
 
     @BeforeEach
@@ -44,7 +41,7 @@ public class PaymentTest extends CardTest {
         driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         wait = new WebDriverWait(driver, 10);
-        driver.manage().window().setSize(new Dimension(1290, 730));
+        driver.manage().window().maximize();
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
         driver.findElement(alert).click();
@@ -61,10 +58,8 @@ public class PaymentTest extends CardTest {
         assertTrue(driver.findElement(buyAndPayButton).isDisplayed());
     }
 
-    private void goToPayment() {
-        driver.findElement(goToCash).click();
-        wait.until(ExpectedConditions.elementToBeClickable(showLogin));
-    }
+
+
 
     @Test
         public void paymentByNoyLoggedUserTest() {
@@ -72,14 +67,17 @@ public class PaymentTest extends CardTest {
             addProductToCardBeforePayment();
             goToPayment();
             addDateToPayment();
-
-
         }
+
+    @AfterEach
+    public void closeDriver(){
+        driver.quit();
+    }
 
     private void addDateToPayment() {
         driver.findElement(firstName).sendKeys("Beata");
         driver.findElement(secondName).sendKeys("Dąb");
-      WebElement country= driver.findElement(By.cssSelector("[id='billing_country']"));
+        WebElement country= driver.findElement(By.cssSelector("[id='billing_country']"));
         Select dropdown = new Select(country);
         dropdown.selectByValue("PR");
         driver.findElement(adress).sendKeys("aaa");
@@ -88,16 +86,20 @@ public class PaymentTest extends CardTest {
         driver.findElement(phone).sendKeys("789654123");
         driver.findElement(email).sendKeys("beata@wp.pl");
         driver.findElement(createCount).click();
-      /*  WebElement strongPassword = By.cssSelector("[class='woocommerce-password-strength good']");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(strongPassword)
-        Assertions.assertTrue((strongPassword) */
+        wait.until(ExpectedConditions.visibilityOfElementLocated(createPassword)).sendKeys("Biedronka0291");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(strongPassword));
+        assertTrue(driver.findElement(createPassword).isDisplayed());
 
+    }
+    private void goToPayment() {
+        driver.findElement(goToCash).click();
+        wait.until(ExpectedConditions.elementToBeClickable(showLogin));
     }
 
 
     private void logIn() {
-        wait.until(ExpectedConditions.presenceOfElementLocated(username)).clear();
-        driver.findElement(username).sendKeys("beata.dabrowska91@gmail.com");
+        wait.until(ExpectedConditions.presenceOfElementLocated(userName)).clear();
+        driver.findElement(userName).sendKeys("beata.dabrowska91@gmail.com");
         driver.findElement(password).sendKeys("Biedronka0291");
         driver.findElement(loginButton).click();
 
@@ -114,12 +116,4 @@ public class PaymentTest extends CardTest {
         driver.navigate().to(page);
     }
 
-
-
-
-
-    @AfterEach
-    public void closeDriver(){
-        driver.quit();
-    }
 }
