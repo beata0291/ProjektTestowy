@@ -14,7 +14,6 @@ public class CardTest {
     WebDriverWait wait;
     String productID = "386";
     String[] products = {"386", "393", "391", "50", "389"};
-
     By alert = By.cssSelector(".woocommerce-store-notice__dismiss-link");
     By addProductToCardFromProductPage = By.cssSelector("button[name='add-to-cart']");
     By addProductToCardFromCategoryPage = By.cssSelector("a[href='?add-to-cart="+productID+"']");
@@ -23,7 +22,6 @@ public class CardTest {
     By removeButton = By.cssSelector("td[class='product-remove']>a");
     By countInCard = By.cssSelector("input[class='input-text qty text']");
     By removeConfirm = By.cssSelector("[class='woocommerce-message']>a");
-
     int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     String[] productPages = {"/egipt-el-gouna/","/wspinaczka-via-ferraty/","/wspinaczka-island-peak/",
             "/fuerteventura-sotavento/", "/grecja-limnos/", "/windsurfing-w-karpathos/",
@@ -35,14 +33,13 @@ public class CardTest {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedrivers.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS); //załadowanie strony
-        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); // czekanie na webelement
+
         wait = new WebDriverWait(driver, 10);
         driver.manage().window().setSize(new Dimension(1290, 730));
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
         driver.findElement(alert).click();
-    //driver.findElements(By.cssSelector("tralala")).get(0); ->wyszukanie listy elementów o selektorze tralala.
-    // i biore pierwszy element czyli elementu o indeksie 0
+
     }
 
 
@@ -85,8 +82,8 @@ public class CardTest {
             addProductToCardFromProductPage();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromProductPage));
         }
-        viewCardFromProductPage();
-        String count = driver.findElement(countInCard).getAttribute("value");
+            viewCardFromProductPage();
+            String count = driver.findElement(countInCard).getAttribute("value");
         assertAll(
                 () -> assertTrue(driver.findElement(removeButton).isDisplayed()),
                 () -> Assertions.assertEquals("10", count));
@@ -114,26 +111,23 @@ public class CardTest {
 
         @Test
         public void addFiveDifferentProductToCard () {
-       navigate("https://fakestore.testelka.pl/product-category/windsurfing/");
+            navigate("https://fakestore.testelka.pl/product-category/windsurfing/");
+            String[] products2 = products.clone();
 
-    String[] products2 = products.clone();
-
-    while ( products2.length>0){
-        String element = products2[0];
-        System.out.println("element "+ element);
-        System.out.println("%n");
-        System.out.println("products2.length " + products2.length);
-        System.out.println("%n");
-        products2 = ArrayUtils.remove(products2,0);
-        System.out.println("-----");
-        System.out.println("%n");
+         while ( products2.length>0){
+            String element = products2[0];
+            System.out.println("element "+ element);
+            System.out.println("%n");
+            System.out.println("products2.length " + products2.length);
+            System.out.println("%n");
+            products2 = ArrayUtils.remove(products2,0);
+            System.out.println("-----");
+            System.out.println("%n");
         By addAllProductToCardFromCategoryPage = By.cssSelector("a[href='?add-to-cart="+element+"']");
         driver.findElement(addAllProductToCardFromCategoryPage).click();
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
         }
             viewCardFromCategoryPage();
-         //   System.out.println("products.length poza petla " + products.length);
-       //     System.out.println("products2.length poza petla " + products2.length);
             By countOfButton = By.cssSelector("a[class='remove']");
             wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
             assertEquals(5, driver.findElements(countOfButton).size(), "Nie ma hehe");
@@ -151,9 +145,9 @@ public class CardTest {
     }
 
 
-@Test
+    @Test
     public void addTenTDifferentProductToCard() {
-    for (String productPage : productPages) {
+         for (String productPage : productPages) {
         navigate("https://fakestore.testelka.pl/product" + productPage);
         addProductToCardFromProductPage();
     }
@@ -164,7 +158,7 @@ public class CardTest {
         driver.quit();
     }
 
-    protected void navigate(String page) {
+    private void navigate(String page) {
         driver.navigate().to(page);
     }
 
