@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CardTest {
+
+
     WebDriver driver;
     WebDriverWait wait;
     String productID = "386";
@@ -33,19 +35,19 @@ public class CardTest {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedrivers.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS); //załadowanie strony
-
         wait = new WebDriverWait(driver, 10);
         driver.manage().window().setSize(new Dimension(1290, 730));
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
         driver.findElement(alert).click();
 
+
     }
 
 
     @Test
     public void addProductToCardFromProductPageTest() {
-        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
         addProductToCardAndView();
         String count = driver.findElement(countInCard).getAttribute("value");
         assertAll(
@@ -55,7 +57,7 @@ public class CardTest {
 
     @Test
     public void addProductToCardFromCategoryPageTest() {
-        navigate("https://fakestore.testelka.pl/product-category/windsurfing/");
+        navigatePage("https://fakestore.testelka.pl/product-category/windsurfing/");
         addProductToCardAndViewFromCategoryPage();
         String count = driver.findElement(countInCard).getAttribute("value");
         assertAll(
@@ -65,7 +67,7 @@ public class CardTest {
 
     @Test
     public void addTenProductsToCardTest() {
-        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
         clearForCount();
         addCountOfProduct("10");
         addProductToCardAndView();
@@ -77,7 +79,7 @@ public class CardTest {
 
     @Test
     public void addTenTimeOneProductTest() {
-        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
         for (int value : values) {
             addProductToCardFromProductPage();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromProductPage));
@@ -91,7 +93,7 @@ public class CardTest {
 
         @Test
         public void changeCountFromCardTest() {
-        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
         addProductToCardAndView();
         clearForCount();
         addCountOfProduct("5");
@@ -103,7 +105,7 @@ public class CardTest {
 
         @Test
         public void removeProductFromCard () {
-            navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+            navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
             addProductToCardAndView();
             removeProduct();
             assertTrue(driver.findElement(removeConfirm).isDisplayed());
@@ -111,7 +113,7 @@ public class CardTest {
 
         @Test
         public void addFiveDifferentProductToCard () {
-            navigate("https://fakestore.testelka.pl/product-category/windsurfing/");
+            navigatePage("https://fakestore.testelka.pl/product-category/windsurfing/");
             String[] products2 = products.clone();
 
          while ( products2.length>0){
@@ -148,7 +150,7 @@ public class CardTest {
     @Test
     public void addTenTDifferentProductToCard() {
          for (String productPage : productPages) {
-        navigate("https://fakestore.testelka.pl/product" + productPage);
+        navigatePage("https://fakestore.testelka.pl/product" + productPage);
         addProductToCardFromProductPage();
     }
 
@@ -158,7 +160,7 @@ public class CardTest {
         driver.quit();
     }
 
-    private void navigate(String page) {
+    private void navigatePage(String page) {
         driver.navigate().to(page);
     }
 
@@ -200,14 +202,25 @@ public class CardTest {
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
     }
 
-    private void addCountOfProduct(String number) {
-        driver.findElement(countInCard).sendKeys(number);
+    private int addCountOfProduct(String productsAmount) {
+        driver.findElement(countInCard).sendKeys(productsAmount);
+        int productsAmountNumber = Integer.parseInt(productsAmount);
+        return productsAmountNumber;
     }
 
     private void clearForCount() {
         driver.findElement(countInCard).clear();
     }
 
-
+//    @Test
+//    public void getSummedNumbers() {
+//        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+//        addProductToCardAndView();
+//        clearForCount();
+//        int numberOfProductsInPLN = addCountOfProduct("20");
+//       System.out.print("Dodano " + numberOfProductsInPLN + " zł produktów");
+//       int numberOfProductsInEUR = numberOfProductsInPLN * 4;
+//        System.out.print("Dodano " + numberOfProductsInEUR + " eur produktów");
+//    }
 
 }
