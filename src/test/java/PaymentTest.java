@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -7,8 +6,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
@@ -24,7 +21,6 @@ public class PaymentTest extends CardTest {
     By userName = By.cssSelector("[id='username']");
     By passwordName = By.cssSelector("[id='password']");
     By loginButton = By.cssSelector("[name='login']");
-    By buyAndPayButton = By.cssSelector("[id='place_order']");
     By firstName = By.cssSelector("[id='billing_first_name']");
     By secondName = By.cssSelector("[id='billing_last_name']");
     By adress = By.cssSelector("[id='billing_address_1']");
@@ -93,9 +89,6 @@ public class PaymentTest extends CardTest {
             addDateToPayment();
 
 
-
-
-
         }
 @Test
     public void logTest() {
@@ -150,10 +143,6 @@ public class PaymentTest extends CardTest {
 }
 
 
-
-
-
-
     private void goToPayment() {
         driver.findElement(goToCash).click();
         wait.until(ExpectedConditions.elementToBeClickable(showLogin));
@@ -188,3 +177,13 @@ public class PaymentTest extends CardTest {
     }
 
 }
+//    @Test
+//    public void getSummedNumbers() {
+//        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+//        addProductToCardAndView();
+//        clearForCount();
+//        int numberOfProductsInPLN = addCountOfProduct("20");
+//       System.out.print("Dodano " + numberOfProductsInPLN + " zł produktów");
+//       int numberOfProductsInEUR = numberOfProductsInPLN * 4;
+//        System.out.print("Dodano " + numberOfProductsInEUR + " eur produktów");
+//    }

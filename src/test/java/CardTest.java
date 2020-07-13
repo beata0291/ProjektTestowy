@@ -24,6 +24,7 @@ public class CardTest {
     By removeButton = By.cssSelector("td[class='product-remove']>a");
     By countInCard = By.cssSelector("input[class='input-text qty text']");
     By removeConfirm = By.cssSelector("[class='woocommerce-message']>a");
+
     int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     String[] productPages = {"/egipt-el-gouna/","/wspinaczka-via-ferraty/","/wspinaczka-island-peak/",
             "/fuerteventura-sotavento/", "/grecja-limnos/", "/windsurfing-w-karpathos/",
@@ -73,7 +74,7 @@ public class CardTest {
         addProductToCardAndView();
         String count = driver.findElement(countInCard).getAttribute("value");
         assertAll(
-                () -> assertTrue(driver.findElement(removeButton).isDisplayed()),
+                () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Counts of added product is different than 10"),
                 () -> Assertions.assertEquals("10", count));
     }
 
@@ -87,7 +88,7 @@ public class CardTest {
             viewCardFromProductPage();
             String count = driver.findElement(countInCard).getAttribute("value");
         assertAll(
-                () -> assertTrue(driver.findElement(removeButton).isDisplayed()),
+                () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Counts of added product is different than 10"),
                 () -> Assertions.assertEquals("10", count));
     }
 
@@ -99,7 +100,7 @@ public class CardTest {
         addCountOfProduct("5");
             String count = driver.findElement(countInCard).getAttribute("value");
             assertAll(
-                    () -> assertTrue(driver.findElement(removeButton).isDisplayed()),
+                    () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Update count of product didn't work"),
                     () -> Assertions.assertEquals("5", count));
         }
 
@@ -108,7 +109,7 @@ public class CardTest {
             navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
             addProductToCardAndView();
             removeProduct();
-            assertTrue(driver.findElement(removeConfirm).isDisplayed());
+            assertTrue(driver.findElement(removeConfirm).isDisplayed(),"Product wasn't removed");
         }
 
         @Test
@@ -132,7 +133,7 @@ public class CardTest {
             viewCardFromCategoryPage();
             By countOfButton = By.cssSelector("a[class='remove']");
             wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
-            assertEquals(5, driver.findElements(countOfButton).size(), "Nie ma hehe");
+            assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
 
     }
     @Test
@@ -144,6 +145,7 @@ public class CardTest {
             driver.findElement(addAllProductToCardFromCategoryPage).click();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
         }
+        //assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
     }
 
 
@@ -153,7 +155,8 @@ public class CardTest {
         navigatePage("https://fakestore.testelka.pl/product" + productPage);
         addProductToCardFromProductPage();
     }
-
+       // assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
+//poprawic asercje
 }
     @AfterEach
     public void closeDriver(){
@@ -212,15 +215,6 @@ public class CardTest {
         driver.findElement(countInCard).clear();
     }
 
-//    @Test
-//    public void getSummedNumbers() {
-//        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
-//        addProductToCardAndView();
-//        clearForCount();
-//        int numberOfProductsInPLN = addCountOfProduct("20");
-//       System.out.print("Dodano " + numberOfProductsInPLN + " zł produktów");
-//       int numberOfProductsInEUR = numberOfProductsInPLN * 4;
-//        System.out.print("Dodano " + numberOfProductsInEUR + " eur produktów");
-//    }
+
 
 }
