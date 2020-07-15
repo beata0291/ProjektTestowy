@@ -75,7 +75,7 @@ public class PaymentTest  {
             navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
             addProductToCardBeforePayment();
             goToPayment();
-            addDateToPayment();
+            addDateToPayment("beata+0000@wp.pl");
             payByCreditCard();
             termsAndConfirm();
             wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
@@ -88,12 +88,17 @@ public class PaymentTest  {
             navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
             addProductToCardBeforePayment();
             goToPayment();
-            addDateToPayment();
+            addDateToPayment("beata@wp.pl");
+            creatingAccount();
+            payByCreditCard();
+            termsAndConfirm();
+            wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
+            assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
         }
 @Test
     public void logTest() {
         navigateToPage("https://fakestore.testelka.pl/moje-konto/");
-        logIn("beata.dabrowska91@gmail.com","Biedronka0291");
+        logIn("beata@wp.pl","Biedronka0291");
       assertTrue(driver.findElement(By.cssSelector("[class='delete-me']")).isDisplayed(),"Something was wrong. Delivery didn't compound.");
 
 
@@ -123,7 +128,7 @@ public class PaymentTest  {
         driver.quit();
     }
 
-    private void addDateToPayment() {
+    private void addDateToPayment(String emailField) {
         driver.findElement(firstName).sendKeys("Beata");
         driver.findElement(secondName).sendKeys("Dąb");
         WebElement country = driver.findElement(By.cssSelector("[id='billing_country']"));
@@ -133,27 +138,20 @@ public class PaymentTest  {
         driver.findElement(postCard).sendKeys("87-896");
         driver.findElement(city).sendKeys("Kraków");
         driver.findElement(phone).sendKeys("789654123");
-        driver.findElement(email).sendKeys("beata+8@wp.pl");
+        driver.findElement(email).sendKeys(emailField);
     }
 
     private void creatingAccount() {
         driver.findElement(createCount).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(createPassword)).sendKeys("Biedronka0291");
         wait.until(ExpectedConditions.visibilityOfElementLocated(strongPassword));
-        assertTrue(driver.findElement(createPassword).isDisplayed());
+
 }
 
 
     private void goToPayment() {
         driver.findElement(goToCash).click();
         wait.until(ExpectedConditions.elementToBeClickable(showLogin));
-    }
-    private  void createCount() {
-        driver.findElement(createCount).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(createPassword)).sendKeys("Biedronka0291");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(strongPassword));
-        assertTrue(driver.findElement(createPassword).isDisplayed());
-
     }
 
 
@@ -178,13 +176,3 @@ public class PaymentTest  {
     }
 
 }
-//    @Test
-//    public void getSummedNumbers() {
-//        navigate("https://fakestore.testelka.pl/product/egipt-el-gouna/");
-//        addProductToCardAndView();
-//        clearForCount();
-//        int numberOfProductsInPLN = addCountOfProduct("20");
-//       System.out.print("Dodano " + numberOfProductsInPLN + " zł produktów");
-//       int numberOfProductsInEUR = numberOfProductsInPLN * 4;
-//        System.out.print("Dodano " + numberOfProductsInEUR + " eur produktów");
-//    }

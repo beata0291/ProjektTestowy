@@ -145,8 +145,12 @@ public class CardTest {
             driver.findElement(addAllProductToCardFromCategoryPage).click();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
         }
-        //assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
+      /*  By countOfButton = By.cssSelector("a[class='remove']");
+        wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
+        assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
+*/
     }
+
 
 
     @Test
