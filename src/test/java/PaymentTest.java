@@ -11,7 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.TimeUnit;
 
 
-public class PaymentTest extends CardTest {
+public class PaymentTest  {
+
+    CardTest test = new CardTest();
 
     WebDriver driver;
     WebDriverWait wait;
@@ -59,7 +61,7 @@ public class PaymentTest extends CardTest {
         addProductToCardBeforePayment();
         goToPayment();
         driver.findElement(showLogin).click();
-        logIn("beata.dabrowska92@wp.pl","Biedronka0291");
+        logIn("beata.dabrowska91@wp.pl","Biedronka0291");
         payByCreditCard();
         termsAndConfirm();
         assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
@@ -87,14 +89,13 @@ public class PaymentTest extends CardTest {
             addProductToCardBeforePayment();
             goToPayment();
             addDateToPayment();
-
-
         }
 @Test
     public void logTest() {
         navigateToPage("https://fakestore.testelka.pl/moje-konto/");
-        logIn(" beata.dabrowska91@gmail.com","Biedronka0291");
-        assertTrue(driver.findElement(By.cssSelector("[class='delete-me']")).isDisplayed(),"This user does not exist");
+        logIn("beata.dabrowska91@gmail.com","Biedronka0291");
+      assertTrue(driver.findElement(By.cssSelector("[class='delete-me']")).isDisplayed(),"Something was wrong. Delivery didn't compound.");
+
 
     }
 
@@ -132,7 +133,7 @@ public class PaymentTest extends CardTest {
         driver.findElement(postCard).sendKeys("87-896");
         driver.findElement(city).sendKeys("Kraków");
         driver.findElement(phone).sendKeys("789654123");
-        driver.findElement(email).sendKeys("beata@wp.pl");
+        driver.findElement(email).sendKeys("beata+8@wp.pl");
     }
 
     private void creatingAccount() {
@@ -165,9 +166,9 @@ public class PaymentTest extends CardTest {
     }
 
     private void addProductToCardBeforePayment() {
-        driver.findElement(addProductToCardFromProductPage).click();
-        wait.until(ExpectedConditions.elementToBeClickable(viewCardFromProductPage)).click();
-        wait.until(ExpectedConditions.elementToBeClickable(removeButton));
+        driver.findElement(test.addProductToCardFromProductPage).click();
+        wait.until(ExpectedConditions.elementToBeClickable(test.viewCardFromProductPage)).click();
+        wait.until(ExpectedConditions.elementToBeClickable(test.removeButton));
         }
 
 
