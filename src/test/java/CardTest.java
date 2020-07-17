@@ -24,6 +24,7 @@ public class CardTest {
     By removeButton = By.cssSelector("td[class='product-remove']>a");
     By countInCard = By.cssSelector("input[class='input-text qty text']");
     By removeConfirm = By.cssSelector("[class='woocommerce-message']>a");
+    By updateCard = By.cssSelector("[name='update_cart']");
 
     int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     String[] productPages = {"/egipt-el-gouna/","/wspinaczka-via-ferraty/","/wspinaczka-island-peak/",
@@ -41,19 +42,18 @@ public class CardTest {
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
         driver.findElement(alert).click();
-
-
     }
 
 
     @Test
     public void addProductToCardFromProductPageTest() {
-        navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        navigatePage("https://fakestore.testelka.pl/product/grecja-limnos/");
         addProductToCardAndView();
         String count = driver.findElement(countInCard).getAttribute("value");
+        int countInt = Integer.parseInt(count);
         assertAll(
                 () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Somethining wrong. Product wasn't added to Card"),
-                () -> Assertions.assertEquals("1", count,"Count from card is incorrect. It should be one product"));
+                () -> Assertions.assertEquals(1, countInt,"Count from card is incorrect. It should be one product"));
     }
 
     @Test
@@ -61,9 +61,10 @@ public class CardTest {
         navigatePage("https://fakestore.testelka.pl/product-category/windsurfing/");
         addProductToCardAndViewFromCategoryPage();
         String count = driver.findElement(countInCard).getAttribute("value");
+        int countInt = Integer.parseInt(count);
         assertAll(
                 () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Somethining wrong. Product wasn't added to Card"),
-                () -> Assertions.assertEquals("1", count,"Count from card is incorrect. It should be one product"));
+                () -> Assertions.assertEquals(1, countInt,"Count from card is incorrect. It should be one product"));
         }
 
     @Test
@@ -73,9 +74,10 @@ public class CardTest {
         addCountOfProduct("10");
         addProductToCardAndView();
         String count = driver.findElement(countInCard).getAttribute("value");
+        int countInt = Integer.parseInt(count);
         assertAll(
                 () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Counts of added product is different than 10"),
-                () -> Assertions.assertEquals("10", count));
+                () -> Assertions.assertEquals(10, countInt,"Count from card is incorrect. It should be one product"));
     }
 
     @Test
@@ -85,11 +87,13 @@ public class CardTest {
             addProductToCardFromProductPage();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromProductPage));
         }
-            viewCardFromProductPage();
-            String count = driver.findElement(countInCard).getAttribute("value");
+
+        viewCardFromProductPage();
+        String count = driver.findElement(countInCard).getAttribute("value");
+        int countInt = Integer.parseInt(count);
         assertAll(
                 () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Counts of added product is different than 10"),
-                () -> Assertions.assertEquals("10", count));
+                () -> Assertions.assertEquals(10, countInt,"Count from card is incorrect. It should be one product"));
     }
 
         @Test
@@ -98,13 +102,20 @@ public class CardTest {
         addProductToCardAndView();
         clearForCount();
         addCountOfProduct("5");
-            String count = driver.findElement(countInCard).getAttribute("value");
+        updateCard();
+        String count = driver.findElement(countInCard).getAttribute("value");
+        int countInt = Integer.parseInt(count);
             assertAll(
                     () -> assertTrue(driver.findElement(removeButton).isDisplayed(),"Update count of product didn't work"),
-                    () -> Assertions.assertEquals("5", count));
+                    () -> Assertions.assertEquals(5, countInt,"Count from card is incorrect. It should be one product"));
         }
 
-        @Test
+    private void updateCard() {
+        wait.until(ExpectedConditions.elementToBeClickable(updateCard)).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".woocommerce-message")));
+    }
+
+    @Test
         public void removeProductFromCard () {
             navigatePage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
             addProductToCardAndView();
@@ -131,37 +142,43 @@ public class CardTest {
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
         }
             viewCardFromCategoryPage();
-            By countOfButton = By.cssSelector("a[class='remove']");
-            wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
+            By countOfButton = By.cssSelector("tr[class='woocommerce-cart-form__cart-item cart_item']");
+            wait.until(ExpectedConditions.visibilityOfElementLocated(countOfButton));
+            WebElement cuppon = driver.findElement(By.cssSelector("[name='apply_coupon']"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cuppon);
             assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
-
     }
+
     @Test
     public void addFiveDifferentProductToCard2 () {
         driver.navigate().to("https://fakestore.testelka.pl/product-category/windsurfing/");
-
         for (String element : products) {
             By addAllProductToCardFromCategoryPage = By.cssSelector("a[href='?add-to-cart=" + element + "']");
             driver.findElement(addAllProductToCardFromCategoryPage).click();
             wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
         }
-      /*  By countOfButton = By.cssSelector("a[class='remove']");
-        wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
+        viewCardFromCategoryPage();
+        By countOfButton = By.cssSelector("tr[class='woocommerce-cart-form__cart-item cart_item']");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(countOfButton));
+        WebElement coupon = driver.findElement(By.cssSelector("[name='apply_coupon']"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", coupon);
         assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
-*/
+
     }
-
-
 
     @Test
     public void addTenTDifferentProductToCard() {
          for (String productPage : productPages) {
         navigatePage("https://fakestore.testelka.pl/product" + productPage);
-        addProductToCardFromProductPage();
-    }
-       // assertEquals(5, driver.findElements(countOfButton).size(), "Counts of added product is different than 5");
-//poprawic asercje
+        addProductToCardFromProductPage(); }
+        viewCardFromProductPage();
+        By countOfButton = By.cssSelector("a[class='remove']");
+        wait.until(ExpectedConditions.elementToBeClickable(countOfButton));
+        WebElement cuppon = driver.findElement(By.cssSelector("[name='apply_coupon']"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cuppon);
+        assertEquals(10, driver.findElements(countOfButton).size(), "Counts of added product is different than 10");
 }
+
     @AfterEach
     public void closeDriver(){
         driver.quit();
@@ -171,13 +188,10 @@ public class CardTest {
         driver.navigate().to(page);
     }
 
-
     private void addProductToCardAndView() {
         addProductToCardFromProductPage();
         viewCardFromProductPage();
-
     }
-
     private void removeProduct() {
         wait.until(ExpectedConditions.elementToBeClickable(removeButton));
         driver.findElement(removeButton).click();
@@ -194,7 +208,7 @@ public class CardTest {
         driver.findElement(addProductToCardFromProductPage).click();
     }
     private void addProductToCardAndViewFromCategoryPage() {
-        addToProductFromCategoryPare();
+        addToProductFromCategoryPage();
         viewCardFromCategoryPage();
 
     }
@@ -204,7 +218,7 @@ public class CardTest {
         wait.until(ExpectedConditions.elementToBeClickable(removeButton));
     }
 
-    private void addToProductFromCategoryPare() {
+    private void addToProductFromCategoryPage() {
         driver.findElement(addProductToCardFromCategoryPage).click();
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
     }
@@ -218,7 +232,5 @@ public class CardTest {
     private void clearForCount() {
         driver.findElement(countInCard).clear();
     }
-
-
 
 }
