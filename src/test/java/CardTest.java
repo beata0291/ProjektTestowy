@@ -223,10 +223,9 @@ public class CardTest {
         wait.until(ExpectedConditions.elementToBeClickable(viewCardFromCategoryPage));
     }
 
-    private int addCountOfProduct(String productsAmount) {
+    private void addCountOfProduct(String productsAmount) {
         driver.findElement(countInCard).sendKeys(productsAmount);
-        int productsAmountNumber = Integer.parseInt(productsAmount);
-        return productsAmountNumber;
+
     }
 
     private void clearForCount() {

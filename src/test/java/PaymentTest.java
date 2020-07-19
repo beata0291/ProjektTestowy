@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
@@ -6,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,9 @@ public class PaymentTest  {
     By terms = By.cssSelector("[name='terms']");
     By confirm = By.cssSelector("[id='place_order']");
     By confirmationOfDelivery = By.cssSelector("[id='post-7']");
+    By cardNumberFrame = By.cssSelector("[name='__privateStripeFrame8']");
+    By expiryDateFrame = By.cssSelector("[name='__privateStripeFrame9']");
+    By cvcFrame = By.cssSelector("[name='__privateStripeFrame10']");
 
 
     @BeforeEach
@@ -47,7 +52,7 @@ public class PaymentTest  {
         System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedrivers.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
-        wait = new WebDriverWait(driver, 10);
+        wait = new WebDriverWait(driver, 6);
         driver.manage().window().maximize();
         driver.manage().window().setPosition(new Point(8, 30));
         driver.navigate().to("https://fakestore.testelka.pl");
@@ -67,43 +72,65 @@ public class PaymentTest  {
         assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
     }
 
+    @Test
+    public void paymentByNewUserWithoutCreatingAccountTest() {
+        navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        addProductToCardBeforePayment();
+        goToPayment();
+        addDateToPayment("beata+0000@wp.pl");
+        payByCreditCard();
+        termsAndConfirm();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
+        assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
 
-
+        }
 
     @Test
-        public void paymentByNewUserWithoutCreatingAccountTest() {
-            navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
-            addProductToCardBeforePayment();
-            goToPayment();
-            addDateToPayment("beata+0000@wp.pl");
-            payByCreditCard();
-            termsAndConfirm();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
-            assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
-
+    public void paymentWithCreatingNewAccountTest(){
+        navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        addProductToCardBeforePayment();
+        goToPayment();
+        addDateToPayment("beata@wp.pl");
+        creatingAccount();
+        payByCreditCard();
+        termsAndConfirm();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
+        assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
         }
 
-        @Test
-        public void paymentWithCreatingNewAccountTest(){
-            navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
-            addProductToCardBeforePayment();
-            goToPayment();
-            addDateToPayment("beata@wp.pl");
-            creatingAccount();
-            payByCreditCard();
-            termsAndConfirm();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
-            assertTrue(driver.findElement(confirmationOfDelivery).isDisplayed(),"Something was wrong. Delivery didn't compound.");
-        }
-@Test
+    @Test
     public void logTest() {
         navigateToPage("https://fakestore.testelka.pl/moje-konto/");
         logIn("beata@wp.pl","Biedronka0291");
-      assertTrue(driver.findElement(By.cssSelector("[class='delete-me']")).isDisplayed(),"Something was wrong. Delivery didn't compound.");
-
+        assertTrue(driver.findElement(By.cssSelector("[class='delete-me']")).isDisplayed(),"Something was wrong. Delivery didn't compound.");
 
     }
 
+    @Test
+    public void summaryTest() {
+        navigateToPage("https://fakestore.testelka.pl/product/egipt-el-gouna/");
+        addProductToCardBeforePayment();
+        goToPayment();
+        addDateToPayment("beata+0000@wp.pl");
+        payByCreditCard();
+        termsAndConfirm();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(confirmationOfDelivery));
+
+        String product = driver.findElement(By.cssSelector("[href='https://fakestore.testelka.pl/product/egipt-el-gouna/']")).getText();
+        String sum = driver.findElement(By.cssSelector("[class='woocommerce-Price-amount amount']")).getText();
+        String productQuantity = driver.findElement(By.cssSelector("[class='product-quantity']")).getText();
+
+
+        assertAll(
+                () -> Assertions.assertEquals("Egipt - El Gouna",product,"Somethining wrong. Product is different than " + product),
+                () -> Assertions.assertEquals("3 400,00 zł",sum,"Sum is different than " + sum),
+                () -> Assertions.assertEquals("× 1",productQuantity,"Quantity of product is different than " + productQuantity));
+    }
+
+    @AfterEach
+    public void closeDriver(){
+        driver.quit();
+    }
 
     private void termsAndConfirm() {
         driver.findElement(terms).click();
@@ -112,20 +139,17 @@ public class PaymentTest  {
 
     private void payByCreditCard() {
         wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIcon));
-        driver.switchTo().frame("__privateStripeFrame8");
-        driver.findElements(numberOfCard).get(0).sendKeys("4242424242424242");
+        fillingInCard(cardNumberFrame, numberOfCard,"4242424242424242");
+        fillingInCard(expiryDateFrame, expiryDateCard, "0822");
+        fillingInCard(cvcFrame, cvcCodeCard, "123");
         driver.switchTo().defaultContent();
-        driver.switchTo().frame("__privateStripeFrame9");
-        driver.findElement(expiryDateCard).sendKeys("0822");
-        driver.switchTo().defaultContent();
-        driver.switchTo().frame("__privateStripeFrame10");
-        driver.findElement(cvcCodeCard).sendKeys("123");
-        driver.switchTo().defaultContent();
+
     }
 
-    @AfterEach
-    public void closeDriver(){
-        driver.quit();
+    private void fillingInCard(By frame, By locator, String tekst) {
+        driver.switchTo().defaultContent();
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame));
+        driver.findElements(locator).get(0).sendKeys(tekst);
     }
 
     private void addDateToPayment(String emailField) {
@@ -156,6 +180,7 @@ public class PaymentTest  {
 
 
     private void logIn(String username, String password) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.presenceOfElementLocated(userName)).clear();
         driver.findElement(userName).sendKeys(username);
         driver.findElement(passwordName).sendKeys(password);
@@ -168,8 +193,6 @@ public class PaymentTest  {
         wait.until(ExpectedConditions.elementToBeClickable(test.viewCardFromProductPage)).click();
         wait.until(ExpectedConditions.elementToBeClickable(test.removeButton));
         }
-
-
 
     private void navigateToPage(String page) {
         driver.navigate().to(page);
